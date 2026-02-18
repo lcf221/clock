@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hourglass Timer</title>
+  <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=abc-diatype@400,500,600&display=swap">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      background: #d3d3d3;
+      font-family: 'ABC Diatype', 'ABC Diatype Unlicensed Trial', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .ampm {
+      font-size: 1.25rem;
+      font-weight: 500;
+      letter-spacing: 0.05em;
+      color: #1a1a1a;
+      margin-bottom: 0.75rem;
+      text-align: center;
+    }
+
+    .clock {
+      font-size: 2rem;
+      font-weight: 600;
+      color: #1a1a1a;
+      letter-spacing: 0.02em;
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+
+    .hourglass-wrap {
+      position: relative;
+      width: 160px;
+      height: 220px;
+    }
+
+    .hourglass-container {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .hourglass-container.flipped {
+      transform: rotate(180deg);
+    }
+
+    .hourglass-svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .sand-stream {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 8px;
+      height: 12px;
+      z-index: 3;
+      overflow: visible;
+      pointer-events: none;
+    }
+
+    .sand-stream-line {
+      position: absolute;
+      left: 50%;
+      top: 0;
+      transform: translateX(-50%);
+      width: 4px;
+      height: 24px;
+      background: linear-gradient(to bottom, #1a1a1a 0%, #1a1a1a 70%, transparent 100%);
+      animation: stream 0.9s linear infinite;
+    }
+
+    @keyframes stream {
+      0% { transform: translateX(-50%) translateY(-28px); opacity: 1; }
+      100% { transform: translateX(-50%) translateY(4px); opacity: 0.4; }
+    }
+
+    .particles {
+      position: absolute;
+      left: 50%;
+      top: 0;
+      transform: translateX(-50%);
+      width: 16px;
+      height: 28px;
+      z-index: 3;
+      pointer-events: none;
+    }
+
+    .particle {
+      position: absolute;
+      width: 2.5px;
+      height: 2.5px;
+      background: #1a1a1a;
+      border-radius: 50%;
+      left: 50%;
+      animation: fall 0.7s linear infinite;
+    }
+
+    .particle:nth-child(1) { animation-delay: 0s; margin-left: -5px; }
+    .particle:nth-child(2) { animation-delay: 0.12s; margin-left: 3px; }
+    .particle:nth-child(3) { animation-delay: 0.24s; margin-left: -2px; }
+    .particle:nth-child(4) { animation-delay: 0.36s; margin-left: 4px; }
+    .particle:nth-child(5) { animation-delay: 0.48s; margin-left: -3px; }
+
+    @keyframes fall {
+      0% { transform: translateY(-20px); opacity: 1; }
+      100% { transform: translateY(18px); opacity: 0.25; }
+    }
+  </style>
+</head>
+<body>
+  <div class="ampm" id="ampm">--</div>
+  <div class="clock" id="clock">00:00:00</div>
+  <div class="hourglass-wrap">
+    <div class="hourglass-container" id="hourglass">
+      <svg class="hourglass-svg" viewBox="0 0 160 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <clipPath id="top-bulb-clip">
+            <path d="M30 28 Q80 24 130 28 Q118 58 82 96 L78 96 Q42 58 30 28 Z"/>
+          </clipPath>
+          <clipPath id="bottom-bulb-clip">
+            <path d="M78 124 L82 124 Q118 162 130 192 Q80 196 30 192 Q42 162 78 124 Z"/>
+          </clipPath>
+        </defs>
+        <!-- Frame: two bulging bulbs and narrow waist -->
+        <path d="M30 28 Q80 24 130 28 Q118 58 82 96 L78 96 Q42 58 30 28 Z" fill="#fff" stroke="#1a1a1a" stroke-width="2"/>
+        <path d="M78 124 L82 124 Q118 162 130 192 Q80 196 30 192 Q42 162 78 124 Z" fill="#fff" stroke="#1a1a1a" stroke-width="2"/>
+        <rect x="76" y="96" width="8" height="28" fill="#fff" stroke="#1a1a1a" stroke-width="2"/>
+        <!-- Sand clipped to each bulb -->
+        <g clip-path="url(#top-bulb-clip)">
+          <rect id="sand-top-rect" x="28" y="28" width="104" height="68" fill="#1a1a1a"/>
+        </g>
+        <g clip-path="url(#bottom-bulb-clip)">
+          <rect id="sand-bottom-rect" x="28" y="124" width="104" height="0" fill="#1a1a1a"/>
+        </g>
+      </svg>
+      <div class="sand-stream">
+        <div class="sand-stream-line"></div>
+        <div class="particles">
+          <span class="particle"></span>
+          <span class="particle"></span>
+          <span class="particle"></span>
+          <span class="particle"></span>
+          <span class="particle"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      const BOTTOM_BULB_BASE_Y = 192;
+      const sandTopRect = document.getElementById('sand-top-rect');
+      const sandBottomRect = document.getElementById('sand-bottom-rect');
+      const container = document.getElementById('hourglass');
+      const clockEl = document.getElementById('clock');
+      const ampmEl = document.getElementById('ampm');
+
+      const maxSandHeight = 68;
+
+      function updateClock() {
+        const now = new Date();
+        let h = now.getHours();
+        const m = now.getMinutes();
+        const s = now.getSeconds();
+        const ampm = h >= 12 ? 'PM' : 'AM';
+        h = h % 12 || 12;
+        clockEl.textContent = [
+          h.toString().padStart(2, '0'),
+          m.toString().padStart(2, '0'),
+          s.toString().padStart(2, '0')
+        ].join(':');
+        ampmEl.textContent = ampm;
+      }
+
+      function tick() {
+        const date = new Date();
+        const minute = date.getMinutes();
+        const second = date.getSeconds();
+        const ms = date.getMilliseconds();
+        const t = (second + ms / 1000) / 60;
+
+        const flipped = minute % 2 === 1;
+        container.classList.toggle('flipped', flipped);
+
+        const topHeight = Math.max(0, maxSandHeight * (1 - t));
+        const bottomHeight = maxSandHeight * t;
+
+        if (flipped) {
+          sandTopRect.setAttribute('height', bottomHeight);
+          sandBottomRect.setAttribute('y', BOTTOM_BULB_BASE_Y - topHeight);
+          sandBottomRect.setAttribute('height', topHeight);
+        } else {
+          sandTopRect.setAttribute('height', topHeight);
+          sandBottomRect.setAttribute('y', BOTTOM_BULB_BASE_Y - bottomHeight);
+          sandBottomRect.setAttribute('height', bottomHeight);
+        }
+
+        requestAnimationFrame(tick);
+      }
+
+      updateClock();
+      setInterval(updateClock, 1000);
+      requestAnimationFrame(tick);
+    })();
+  </script>
+</body>
+</html>
